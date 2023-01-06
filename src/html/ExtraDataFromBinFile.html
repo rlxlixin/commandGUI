@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据导出工具</title>
+    <script type="text/javascript" src="../commanjs/vue.js"></script>
+</head>
+<body>
+<a href="../index.html">返回</a>
+<div id="app1">
+
+
+            <div v-for="(item,index) in parameters ">
+                <table>
+                    <tr>
+                        <td>
+                            <label>{{ item.lable }}</label>
+                        </td>
+                        <td>
+
+                            <input v-if="item.type!='select'" v-bind:type="item.type" v-model:value="item.value" >
+                            <div v-if="item.type=='select'">
+
+                                    <select v-model="item.value">
+
+                                    <option v-for="(item1) in item.selectoption">{{item1}}</option>
+
+                                    </select>
+                            </div>
+
+                        </td>
+                        <td><button v-if="item.isneedbutton" v-on:click="openfilepath(item)" >选择 {{item.lable}}</button></td>
+                    </tr>
+                </table>
+
+
+
+
+            </div>
+
+            <button v-on:click="onexecclicked">{{exefile.lable}}</button>
+
+
+</div>
+<script>
+    const dialog = require('@electron/remote').dialog;
+    const path = require('path')
+    const child_process = require('child_process');
+    const {exec} = child_process
+    var app=new Vue({
+        el:"#app1",
+        data:{
+            parameters:[{
+                type:"text",
+                isneedbutton:true,
+                buttoninfo:{
+                    type:"infile"
+                },
+                name:"SBGBinfilepath",
+                lable:"SBGBin",
+                required:true,
+                value:"",
+                option:"-g",
+                isRequired:true
+
+
+            }, {
+                type:"text",
+                isneedbutton:true,
+                buttoninfo:{
+                    type:"outfile"
+                },
+                name:"outpath",
+                lable:"输出路径",
+                required:true,
+                value:"",
+                option:"-o",
+                isRequired:false
+
+
+            },
+                {
+                    type:"select",
+                    isneedbutton:false,
+                    selectoption:["gps","event","lonlat"],
+                    name:"outpath",
+                    lable:"模式",
+                    required:true,
+                    value:"gps",
+                    option:"-m",
+                    isRequired:true
+
+                }],
+            exefile: {
+                path:"D:\\03product\\software\\tool\\extradatafrombin.exe",
+                lable:"开始导出"
+            },
+            value:2
+
+        },
+        methods:{
+            openfilepath: function(item){
+                switch (item.buttoninfo.type)
+                {
+                    case "infile":
+                    {
+                        item.value =  dialog.showOpenDialogSync({
+                            title:"请选择"+item.lable,
+                            properties: ['openFile'],
+                        })
+                        break;
+                    }
+                    case "outfile":
+                    {
+                        item.value = dialog.showSaveDialogSync({
+                            title:"请选择"+item.lable,
+                           // properties: ['openFile'],
+                        });
+                        break;
+                    }
+
+                }
+
+            },
+            onexecclicked:function (){
+                var exepath=this.exefile.path;
+                var parametersstr="";
+                var para=this.parameters;
+                var lenth=para.length;
+                var retunstr=" ";
+                for (let x in para) {
+
+                    if (para[x].value=="")
+                    {
+                        if (para[x].isRequired)
+                        {
+                            retunstr+="    "+para[x].lable+"     \r\n";
+                        }
+
+
+                    }
+                    if (para[x].value!="")
+                    {
+                        parametersstr+=para[x].option+" "+para[x].value+" ";
+                    }
+
+                }
+                if (retunstr!=" ")
+                {
+                    alert("请选择 \r\n"+retunstr )
+                    return;
+                }
+
+                var exestr=exepath+" "+parametersstr;
+                exec(exestr,(error, stdout, stderr)=>{
+                    console.log(error);
+                    console.log(stdout);
+                    flagg=stdout.split("\n");
+                    if (flagg[flagg.length-1]=="sucess")
+                    {
+                        alert("执行成功")
+                    }
+                    console.log(stderr);
+                })
+            }
+        }
+
+
+    })
+
+
+
+
+
+
+
+    async function openDialog() {
+        const result = await dialog.showOpenDialog({
+            properties: ['openFile'],
+        });
+        console.log("run here");
+        console.log(result.filePaths[0]);
+        outname = path.join(path.dirname(result.filePaths[0]), '\\',
+            path.parse(result.filePaths[0]).name);
+        console.log(outname);
+
+    }
+</script>
+</body>
+
+</html>
