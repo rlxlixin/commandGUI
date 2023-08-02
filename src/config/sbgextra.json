@@ -1,0 +1,26 @@
+{
+  "name": "jquery.iframe-transport.js",
+  "data": {
+    "parameters": [
+      {
+        "type": "text",
+        "isneedbutton": true,
+        "buttoninfo": {
+          "type": "infile"
+        },
+        "name": "SBGBinfilepath",
+        "lable": "SBGBin",
+        "required": true,
+        "value": "",
+        "option": "-g",
+        "isRequired": true
+      }
+    ],
+    "exefile": {
+      "path":"D:\\03product\\software\\tool\\extradatafrombin.exe",
+      "lable":"开始导出"
+    },
+    "value":2
+  }
+}
+
