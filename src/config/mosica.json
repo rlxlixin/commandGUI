@@ -1,0 +1,66 @@
+{
+  "name": "拼接软件",
+  "data": {
+    "parameters": [
+      {
+        "type": "text",
+        "isneedbutton": true,
+        "buttoninfo": {
+          "type": "path"
+        },
+        "name": "输入路径",
+        "lable": "bip文件夹",
+        "required": true,
+        "value": "",
+        "option": "-p",
+        "isRequired": true
+      },
+      {
+        "type": "text",
+        "isneedbutton": true,
+        "buttoninfo": {
+          "type": "path"
+        },
+        "name": "输入路径",
+        "lable": "bip文件夹123123",
+        "required": true,
+        "value": "sadfsdf",
+        "option": "-s",
+        "isRequired": true,
+        "hide": true,
+        "unite": false
+      },
+      {
+        "type": "text",
+        "isneedbutton": true,
+        "buttoninfo": {
+          "type": "infile"
+        },
+        "name": "输出路径",
+        "lable": "输出路径",
+        "required": true,
+        "value": "",
+        "option": "-o",
+        "isRequired": true
+      },
+      {
+        "type":"select",
+        "isneedbutton":false,
+        "selectoption":["D"],
+        "name":"workmode",
+        "lable":"模式",
+        "required":true,
+        "value":"D",
+        "option":"-m",
+        "isRequired":true
+
+      }
+    ],
+    "exefile": {
+      "path": "D:\\03product\\software\\tool\\extradatafrombin.exe",
+      "lable": "开始导出"
+    },
+    "value": 2
+  }
+}
+

@@ -10,11 +10,13 @@ const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 800,
+
     webPreferences: {
       nodeIntegration: true,//关闭传递使得能够使用require
       contextIsolation: false,
       enableRemoteModule: true,//使得能够使用require
+      spellcheck: false, // 禁用拼写检查
       preload: path.join(__dirname, 'preload.js'),
     },
   });

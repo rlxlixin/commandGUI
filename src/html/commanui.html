@@ -4,196 +4,60 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script type="text/javascript" src="../commanjs/vue.js"></script>
+    <link rel="stylesheet/less" type="text/css" href="../css/commanui.less">
+    <script type="text/javascript" src="../commanjs/less.min.js"></script>
+
 </head>
 <body>
 <!--<a href="../index.html">返回</a>-->
 <div id="app1">
-    <input type="button" value="打开配置文件" v-on:click="openconfigdata()">
+    <input type="button" value="打开配置文件" v-on:click="openconfigdata()" class="config-button">
+    <div class="mainbox">
+        <h1 >欢迎使用《{{configname}}》</h1>
+        <table class="itemline">
 
-    <div v-for="(item,index) in paramdata.parameters ">
-        <table>
-            <tr>
-                <td>
-                    <label>{{ item.lable }}</label>
-                </td>
-                <td>
+            <tr v-for="(item,index) in paramdata.parameters " v-if="!item.hide">
+                <div>
+                    <!--        //<p ></p>-->
 
-                    <input v-if="item.type!='select'" v-bind:type="item.type" v-model:value="item.value">
-                    <div v-if="item.type=='select'">
 
-                        <select v-model="item.value">
+                    <td>
+                        <label>{{ item.lable }}</label>
+                    </td>
+                    <td>
 
-                            <option v-for="(item1) in item.selectoption">{{item1}}</option>
+                        <input v-if="item.type!='select'" v-bind:type="item.type" v-model:value="item.value" class="input-field">
+                        <div v-if="item.type=='select'">
 
-                        </select>
-                    </div>
+                            <select v-model="item.value" class="select-field">
 
-                </td>
-                <td>
-                    <button v-if="item.isneedbutton" v-on:click="openfilepath(item)">选择 {{item.lable}}</button>
-                </td>
+                                <option v-for="(item1) in item.selectoption">{{item1}}</option>
+
+                            </select>
+                        </div>
+
+                    </td>
+                    <td>
+                        <button v-if="item.isneedbutton" v-on:click="openfilepath(item)" class="select-button">选择 {{item.lable}}</button>
+                    </td>
+
+
+                </div>
             </tr>
+
+
         </table>
-
-
+        <button v-on:click="onexecclicked"  class="exec-button">{{paramdata.exefile.lable}}</button>
     </div>
 
-    <button v-on:click="onexecclicked">{{paramdata.exefile.lable}}</button>
-
+<div class="mainbox" v-if="outstr!=''">
+    <p >命令行输出</p>
+    <textarea id="output" cols="100" rows="50" v-if="outstr!=''" v-model="outstr"></textarea>
+</div>
 
 </div>
-<script>
-    const dialog = require('@electron/remote').dialog;
-    const app1= require('@electron/remote').app;
-    const path = require('path')
-    const child_process = require('child_process');
-
-    const {exec} = child_process
-    execPath = path.dirname (app1.getPath ('exe'));
-    configsavepath=path.join(execPath,"./defualt.json");
-    //判断文件是否存在
-    data ={
-        "name": "请打开配置文件",
-        "data": {
-            "parameters": [
-
-            ],
-            "exefile": {
-                "path":"",
-                "lable":"请配置"
-            },
-            "value":2
-        }
-    }
+<script type="text/javascript" src="../js/commanui.js"></script>
 
 
-    var fs = require('fs');
-
-    if (fs.existsSync(configsavepath)) {
-        console.log('文件存在！');
-        data = require(configsavepath);
-    } else {
-        console.error('文件不存在！');
-    }
-
-
-
-
-
-
-    document.getElementsByTagName("title")[0].innerText = data.name
-
-    console.log(data)
-    var app = new Vue({
-        el: "#app1",
-        data: {
-            paramdata: data.data
-        },
-        methods: {
-            openfilepath: function (item) {
-                switch (item.buttoninfo.type) {
-                    case "infile": {
-                        item.value = dialog.showOpenDialogSync({
-                            title: "请选择" + item.lable,
-                            properties: ['openFile'],
-                        })
-                        break;
-                    }
-                    case "outfile": {
-                        item.value = dialog.showSaveDialogSync({
-                            title: "请选择" + item.lable,
-                            // properties: ['openFile'],
-                        });
-                        break;
-                    }
-                    case "path": {
-                        item.value = dialog.showOpenDialogSync({
-                            title: "请选择" + item.lable,
-                            properties: ['openDirectory'],
-                        });
-                        break;
-                    }
-
-                }
-
-            },
-            openconfigdata: function () {
-
-                var datatempath = dialog.showOpenDialogSync({
-                    title: "请选择配置文件",
-                    properties: ['openFile'],
-                })
-                var datatemp = require(datatempath[0]);
-                this.paramdata = datatemp.data;
-                // console.log(datatemp)
-                //将所选文件复制一份到config/defualt.json
-                var defualtconfigpath =configsavepath;
-                var fs = require('fs');
-                fs.copyFile(datatempath[0], defualtconfigpath, (err) => {
-                    if (err) throw err;
-                    console.log('源文件已拷贝到目标文件');
-                });
-                document.getElementsByTagName("title")[0].innerText = datatemp.name
-
-            }
-            ,
-            onexecclicked: function () {
-                var exepath = this.paramdata.exefile.path;
-                var parametersstr = "";
-                var para = this.paramdata.parameters;
-                var lenth = para.length;
-                var retunstr = " ";
-                for (let x in para) {
-
-                    if (para[x].value == "") {
-                        if (para[x].required) {
-                            retunstr += "    " + para[x].lable + "     \r\n";
-                        }
-
-
-                    }
-                    if (para[x].value != "") {
-                        parametersstr += para[x].option + " " + para[x].value + " ";
-                    }
-
-                }
-                if (retunstr != " ") {
-                    alert("请选择 \r\n" + retunstr)
-                    return;
-                }
-
-                var exestr = exepath + " " + parametersstr;
-                exec(exestr, (error, stdout, stderr) => {
-                    console.log(error);
-                    console.log(stdout);
-                    flagg = stdout.split("\n");
-                    if (flagg[flagg.length - 1] == "sucess") {
-                        alert("执行成功")
-                    }
-                    console.log(stderr);
-                })
-            }
-        }
-
-
-    })
-
-
-    async function openDialog() {
-        const result = await dialog.showOpenDialog({
-            properties: ['openFile'],
-            filters: [
-                {name: 'json', extensions: ['json']},
-            ]
-        });
-        console.log("run here");
-        console.log(result.filePaths[0]);
-        outname = path.join(path.dirname(result.filePaths[0]), '\\',
-            path.parse(result.filePaths[0]).name);
-        console.log(outname);
-        return outname + ".json";
-
-    }
-</script>
 </body>
 </html>
