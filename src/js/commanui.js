@@ -74,6 +74,12 @@ var app = new Vue({
             }
 
         },
+        justopenfilepath: function (item,lablename) {
+            item.path=dialog.showOpenDialogSync({
+                title: lablename ,
+                properties: ['openFile'],
+            })
+        },
         openconfigdata: function () {
 
             var datatempath = dialog.showOpenDialogSync({
@@ -143,6 +149,16 @@ var app = new Vue({
                 this.outstr+="child process exited with code: "+code+"\r\n";
             });
 
+            filedata=require(configsavepath);
+            filedata.data=this.paramdata;
+            //保存配置文件
+            var fs = require('fs');
+            fs.writeFile(configsavepath, JSON.stringify(filedata), function (err) {
+                if (err) {
+                    return console.error(err);
+                }
+                console.log("数据写入成功！");
+             });
 
 
             // exec(exestr, (error, stdout, stderr) => {

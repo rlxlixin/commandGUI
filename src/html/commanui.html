@@ -48,6 +48,8 @@
 
         </table>
         <button v-on:click="onexecclicked"  class="exec-button">{{paramdata.exefile.lable}}</button>
+        <input type="text" v-model="paramdata.exefile.path" style="width: 50%;height: 10px;"  class="input-field">
+        <button v-on:click="justopenfilepath(paramdata.exefile,'更换路径')"   style="width: 60px;height: 20px;font-size: 10px">更换路径</button>
     </div>
 
 <div class="mainbox" v-if="outstr!=''">
