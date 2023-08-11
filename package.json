@@ -1,7 +1,7 @@
 {
-  "name": "ailtool",
-  "productName": "ailtool",
-  "version": "1.0.2",
+  "name": "commanui",
+  "productName": "commanui",
+  "version": "1.0.3",
   "description": "My Electron application description",
   "main": "src/index.js",
   "scripts": {
@@ -50,7 +50,16 @@
             "armv7l",
             "arm64"
           ]
+        },
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "armv7l",
+            "arm64"
+          ]
         }
+
       ],
       "category": "SmartAssembly"
     }
